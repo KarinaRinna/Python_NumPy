@@ -31,3 +31,4 @@ for epoch in range(epochs):
     output = 1 / (1 + np.exp(-output_raw))
 
     # ошибка расчета
+    e_loss += 1 / len(output) * np.sum((output - label) ** 2, axis=0)
