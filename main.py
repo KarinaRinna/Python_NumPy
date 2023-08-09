@@ -22,13 +22,29 @@ for epoch in range(epochs):
         image = np.reshape(image, (-1, 1))
         label = np.reshape(label, (-1, 1))
 
-    # прямое распространение hidden слой
-    hidden_raw = bias_input_to_hidden + weights_input_to_hidden @ image
-    hidden = 1 / (1 + np.exp(-hidden_raw))  # sigmoid
+        # прямое распространение hidden слой
+        hidden_raw = bias_input_to_hidden + weights_input_to_hidden @ image
+        hidden = 1 / (1 + np.exp(-hidden_raw))  # sigmoid
 
-    # прямое распространение output слой
-    output_raw = bias_input_to_output + weights_input_to_output @ hidden
-    output = 1 / (1 + np.exp(-output_raw))
+        # прямое распространение output слой
+        output_raw = bias_input_to_output + weights_input_to_output @ hidden
+        output = 1 / (1 + np.exp(-output_raw))
 
-    # ошибка расчета
-    e_loss += 1 / len(output) * np.sum((output - label) ** 2, axis=0)
+        # ошибка расчета
+        e_loss += 1 / len(output) * np.sum((output - label) ** 2, axis=0)
+        e_correct += int(np.argmax(output) == np.argmax(label))
+
+        # обратное распространение (выходной слой)
+        delta_output = output - label
+        weights_hidden_to_output += -learning_rate * delta_output @ np.transpose(hidden)
+        bias_hidden_to_output += -learning_rate * delta_output
+
+        # обратное распространение (скрытый  слой)
+        delta_hidden = np.transpose(weights_hidden_to_output) @ delta_output * (hidden * (1 - hidden))
+        weights_input_to_hidden += -learning_rate * delta_hidden @ np.transpose(image)
+        bias_input_to_hidden += -learning_rate * delta_hidden
+
+    print(f"Loss:{round((e_loss[0] / images.shape[0]) * 100, 3)}%")
+    print(f"Accuracy:{round((e_correct / images.shape[0]) * 100, 3)}%")
+    e_loss = 0
+    e_correct = 0
