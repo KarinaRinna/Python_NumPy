@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 import numpy
 import matplotlib
 import numpy as np
@@ -50,5 +51,20 @@ for epoch in range(epochs):
     e_loss = 0
     e_correct = 0
 
+# проверка
+import random
 
+test_image = random.choice(images)
+
+image = np.reshape(test_image, (-1, 1))
+
+hidden_raw = bias_input_to_hidden + weights_input_to_hidden @ image
+hidden = 1 / (1 +np.exp(-hidden_raw)) #сигмойд
+
+output_raw = bias_hidden_to_output + weights_hidden_to_output @ hidden
+output = 1 / (1 + np.exp(-output_raw))
+
+plt.imshow(test_image.reshape(28, 28), cmap="Greys")
+plt.title(f"Нейросеть предпологает что это цифра: {output.argmax()}")
+plt.show()
     #15:30
