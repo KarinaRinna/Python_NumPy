@@ -52,14 +52,17 @@ for epoch in range(epochs):
     e_correct = 0
 
 # проверка
-import random
+test_image = plt.imread("custom.jpg", format="jpeg")
 
-test_image = random.choice(images)
+gray = lambda rgb : np.dot(rgb[... , :3] , [0.299, 0.587, 0.144])
+test_image = 1 - (gray(test_image).astype("float32") / 255)
+
+test_image = np.reshape(test_image, (test_image.shape[0] * test_image.shape[1]))
 
 image = np.reshape(test_image, (-1, 1))
 
 hidden_raw = bias_input_to_hidden + weights_input_to_hidden @ image
-hidden = 1 / (1 +np.exp(-hidden_raw)) #сигмойд
+hidden = 1 / (1 + np.exp(-hidden_raw)) #сигмойд
 
 output_raw = bias_hidden_to_output + weights_hidden_to_output @ hidden
 output = 1 / (1 + np.exp(-output_raw))
@@ -67,4 +70,6 @@ output = 1 / (1 + np.exp(-output_raw))
 plt.imshow(test_image.reshape(28, 28), cmap="Greys")
 plt.title(f"Нейросеть предпологает что это цифра: {output.argmax()}")
 plt.show()
-    #15:30
+
+#https://www.youtube.com/watch?v=tihq_bLfk08
+# 16:16 nymPy.save, nymPy.load
